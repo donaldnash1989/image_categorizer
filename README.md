@@ -8,5 +8,5 @@ Adds:
 Run:
 ```bash
 pip install -r requirements.txt
-python app.py
+pythonw app.pyw  # use pythonw to avoid opening a console window on Windows
 ```
