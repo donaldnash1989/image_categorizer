@@ -36,3 +36,27 @@ class ImageService(IImageService):
         self._fs.move(self._current, target)
         self._logger.info(f"Moved {self._current.name} -> {category}")
         self._refresh_current()
+
+    def move_current_to_category_as(self, category: str, new_basename: str) -> None:
+        self._refresh_current()
+        if not self._current:
+            return
+        ext = self._current.suffix
+        if not Path(new_basename).suffix:
+            new_basename = new_basename + ext
+        target = self._root / category / new_basename
+        self._fs.move(self._current, target)
+        self._logger.info(f"Moved {self._current.name} -> {category} as {new_basename}")
+        self._refresh_current()
+
+    def delete_current(self) -> None:
+        self._refresh_current()
+        if not self._current:
+            return
+        name = self._current.name
+        self._fs.delete_file(self._current)
+        self._logger.warn(f"Deleted {name}")
+        self._refresh_current()
+
+    def count_images(self) -> int:
+        return len(self._repo.list_images(self._root))

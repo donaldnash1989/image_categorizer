@@ -24,7 +24,7 @@ def main():
     cat_svc = CategoryService(root_dir, cat_repo, fs, logger)
     img_svc = ImageService(root_dir, img_repo, fs, logger)
 
-    AppController(view, logger, img_loader, cat_svc, img_svc, cfg, root_dir)
+    AppController(view, logger, img_loader, cat_svc, img_svc, fs, cfg, root_dir)
     root.mainloop()
 
 if __name__ == "__main__":

@@ -24,3 +24,6 @@ class LocalFileSystem(IFileSystem):
         shutil.move(str(src), str(dst))
     def exists(self, path: Path) -> bool:
         return path.exists()
+    def delete_file(self, path: Path) -> None:
+        if path.exists() and path.is_file():
+            path.unlink()

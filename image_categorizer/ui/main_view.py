@@ -30,8 +30,14 @@ class MainView(ttk.Frame):
         self.image_view = None
         self.button_panel = None
 
-        self._status = ttk.Label(self, text="Ready", anchor="w")
-        self._status.pack(fill="x", side="bottom")
+        status_bar = ttk.Frame(self)
+        status_bar.pack(fill="x", side="bottom")
+        status_bar.columnconfigure(0, weight=1)
+        status_bar.columnconfigure(1, weight=0)
+        self._status_left = ttk.Label(status_bar, text="Ready", anchor="w")
+        self._status_left.grid(row=0, column=0, sticky="w")
+        self._status_right = ttk.Label(status_bar, text="0 remaining", anchor="e")
+        self._status_right.grid(row=0, column=1, sticky="e", padx=(0,8))
 
     def build_main(self, image_view: ImageView, button_panel: ButtonPanel) -> None:
         self.image_view = image_view
@@ -47,7 +53,10 @@ class MainView(ttk.Frame):
         return Path(path) if path else None
 
     def set_status(self, text: str) -> None:
-        self._status.configure(text=text)
+        self._status_left.configure(text=text)
+
+    def set_remaining_count(self, n: int) -> None:
+        self._status_right.configure(text=f"{n} remaining")
 
     def error(self, title: str, message: str) -> None:
         messagebox.showerror(title, message)
