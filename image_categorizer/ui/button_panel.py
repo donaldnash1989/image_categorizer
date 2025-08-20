@@ -14,6 +14,7 @@ class ButtonPanel(ttk.Frame):
 
         self._scroll = ScrollableFrame(self)
         self._scroll.grid(row=0, column=0, sticky="nsew")
+        self._scroll.inner.bind("<Configure>", self._reflow_buttons, add="+")
 
         footer = ttk.Frame(self)
         footer.grid(row=1, column=0, sticky="ew", pady=(6,0))
@@ -27,6 +28,7 @@ class ButtonPanel(ttk.Frame):
         self._delete_btn.pack(side="right", padx=6, pady=4)
 
         self._buttons: list[ttk.Button] = []
+        self._current_cols: int | None = None
 
     def set_categories(self, categories: list[str]) -> None:
         for b in self._buttons:
@@ -36,17 +38,47 @@ class ButtonPanel(ttk.Frame):
         if not categories:
             return
 
-        row = 0; col = 0
         for name in categories:
-            btn = ttk.Button(self._scroll.inner, text=name, command=lambda n=name: self._on_click(n))
-            btn.grid(row=row, column=col, padx=self._config.ui.button_padx, pady=self._config.ui.button_pady, sticky="ew")
+            btn = ttk.Button(
+                self._scroll.inner, text=name, command=lambda n=name: self._on_click(n)
+            )
             self._buttons.append(btn)
-            col += 1
-            if col >= self._config.ui.buttons_per_row:
-                col = 0; row += 1
 
-        for c in range(self._config.ui.buttons_per_row):
-            self._scroll.inner.grid_columnconfigure(c, weight=1)
+        self._reflow_buttons()
+
+    def _reflow_buttons(self, event=None) -> None:
+        if not self._buttons:
+            return
+
+        inner = self._scroll.inner
+        width = inner.winfo_width()
+        if width <= 0:
+            return
+
+        btn_width = max(b.winfo_reqwidth() for b in self._buttons)
+        total = btn_width + self._config.ui.button_padx * 2
+        cols = max(width // total, 1)
+
+        if cols == self._current_cols:
+            return
+        self._current_cols = cols
+
+        for idx, btn in enumerate(self._buttons):
+            row = idx // cols
+            col = idx % cols
+            btn.grid(
+                row=row,
+                column=col,
+                padx=self._config.ui.button_padx,
+                pady=self._config.ui.button_pady,
+                sticky="ew",
+            )
+
+        # Reset column weights then apply for the active columns
+        for c in range(inner.grid_size()[0]):
+            inner.grid_columnconfigure(c, weight=0)
+        for c in range(cols):
+            inner.grid_columnconfigure(c, weight=1)
 
     def set_enabled(self, enabled: bool) -> None:
         state = "!disabled" if enabled else "disabled"
