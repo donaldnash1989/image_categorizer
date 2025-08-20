@@ -14,7 +14,9 @@ class ButtonPanel(ttk.Frame):
 
         self._scroll = ScrollableFrame(self)
         self._scroll.grid(row=0, column=0, sticky="nsew")
+        # Reflow when the inner frame or its canvas changes size
         self._scroll.inner.bind("<Configure>", self._reflow_buttons, add="+")
+        self._scroll.canvas.bind("<Configure>", self._reflow_buttons, add="+")
 
         footer = ttk.Frame(self)
         footer.grid(row=1, column=0, sticky="ew", pady=(6,0))
@@ -51,7 +53,7 @@ class ButtonPanel(ttk.Frame):
             return
 
         inner = self._scroll.inner
-        width = inner.winfo_width()
+        width = self._scroll.canvas.winfo_width()
         if width <= 0:
             return
 
