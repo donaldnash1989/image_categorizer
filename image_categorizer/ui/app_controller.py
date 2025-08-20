@@ -12,6 +12,7 @@ from .image_view import ImageView
 from .button_panel import ButtonPanel
 from .settings_view import SettingsView
 from .collision_dialog import CollisionDialog
+from . import theme
 
 
 class AppController:
@@ -48,9 +49,16 @@ class AppController:
         settings = SettingsView(view._page_settings, self._cat_svc, self._cfg, on_changed=self._refresh_categories)
         view.place_settings(settings)
 
+        self._apply_theme()
+
         # On Load
         self._refresh_categories()
         self._post_load(initial=True)
+
+    def _apply_theme(self, name: str | None = None) -> None:
+        """Apply the global theme and update child widgets."""
+        theme.apply_theme(self._view._root, name)
+        self._view.button_panel.apply_theme()
 
     def _on_delete_clicked(self):
         path = self._img_svc.current_image()
