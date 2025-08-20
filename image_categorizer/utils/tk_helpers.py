@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from ..ui import theme
+
 class ScrollableFrame(ttk.Frame):
     """A vertically scrollable frame for the category buttons."""
     def __init__(self, parent, *args, **kwargs):
@@ -12,6 +14,11 @@ class ScrollableFrame(ttk.Frame):
         self.inner.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.canvas.create_window((0, 0), window=self.inner, anchor="nw")
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.apply_theme()
 
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
+
+    def apply_theme(self) -> None:
+        """Update the canvas background to match the active theme."""
+        self.canvas.configure(bg=theme.get_color("background"))

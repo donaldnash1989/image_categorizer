@@ -11,10 +11,12 @@ from image_categorizer.infrastructure import (
 )
 from image_categorizer.services import CategoryService, ImageService
 from image_categorizer.ui import MainView, AppController
+from image_categorizer.ui import theme
 
 def main():
     cfg = AppConfig()
     root = tk.Tk()
+    theme.apply_theme(root)
     view = MainView(root, cfg)
 
     chosen = view.ask_root_dir()

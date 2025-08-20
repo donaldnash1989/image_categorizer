@@ -1,4 +1,3 @@
-import tkinter as tk
 from tkinter import ttk
 from ..config import AppConfig
 from ..utils.tk_helpers import ScrollableFrame
@@ -19,8 +18,12 @@ class ButtonPanel(ttk.Frame):
         footer = ttk.Frame(self)
         footer.grid(row=1, column=0, sticky="ew", pady=(6,0))
         footer.columnconfigure(0, weight=1)
-        self._delete_btn = tk.Button(footer, text="Delete", fg="white", bg="#cc0000", activebackground="#990000",
-                                     command=lambda: self._on_delete() if self._on_delete else None)
+        self._delete_btn = ttk.Button(
+            footer,
+            text="Delete",
+            style="Danger.TButton",
+            command=lambda: self._on_delete() if self._on_delete else None,
+        )
         self._delete_btn.pack(side="right", padx=6, pady=4)
 
         self._buttons: list[ttk.Button] = []
@@ -49,4 +52,8 @@ class ButtonPanel(ttk.Frame):
         state = "!disabled" if enabled else "disabled"
         for b in self._buttons:
             b.state([state])
-        self._delete_btn.config(state="normal" if enabled else "disabled")
+        self._delete_btn.state([state])
+
+    def apply_theme(self) -> None:
+        """Update theme-dependent elements."""
+        self._scroll.apply_theme()
