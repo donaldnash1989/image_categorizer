@@ -53,7 +53,7 @@ class ButtonPanel(ttk.Frame):
             return
 
         inner = self._scroll.inner
-        width = self._scroll.canvas.winfo_width()
+        width = event.width if event else inner.winfo_width()
         if width <= 0:
             return
 
