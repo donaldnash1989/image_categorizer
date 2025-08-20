@@ -24,6 +24,15 @@ class SettingsView(ttk.Frame):
         ttk.Button(btns, text="Add", command=self._add).pack(side="left", padx=4)
         ttk.Button(btns, text="Delete", command=self._delete).pack(side="left", padx=4)
 
+        self._auto_resolve_var = tk.BooleanVar(value=self._config.auto_resolve_conflicts)
+        ttk.Checkbutton(
+            self,
+            text="Auto-delete on filename conflict",
+            variable=self._auto_resolve_var,
+            style="Switch.TCheckbutton",
+            command=self._on_auto_resolve_clicked,
+        ).grid(row=3, column=0, sticky="w", padx=6, pady=(0,6))
+
         self.refresh()
 
     def refresh(self):
@@ -49,3 +58,17 @@ class SettingsView(ttk.Frame):
             messagebox.showerror("Cannot Delete", f"Category '{name}' is not empty.")
         self.refresh()
         self._on_changed()
+
+    def _on_auto_resolve_clicked(self):
+        if self._auto_resolve_var.get():
+            ok = messagebox.askokcancel(
+                "Enable Auto-Resolve",
+                "Enabling this option will delete the source image if a file with the same name already exists in the target category.",
+            )
+            if ok:
+                self._config.auto_resolve_conflicts = True
+            else:
+                self._auto_resolve_var.set(False)
+                self._config.auto_resolve_conflicts = False
+        else:
+            self._config.auto_resolve_conflicts = False

@@ -11,6 +11,7 @@ class UiConfig:
     button_pady: int = 4
     image_bg: str = "#111111"
 
-@dataclass(frozen=True)
+@dataclass
 class AppConfig:
     ui: UiConfig = UiConfig()
+    auto_resolve_conflicts: bool = False
