@@ -7,7 +7,7 @@ provides a helper to apply those colors using ``ttk.Style``.  Other modules can
 query the currently active colors via :func:`get_color`.
 """
 
-from tkinter import ttk
+from tkinter import TclError, ttk
 
 # Color definitions ---------------------------------------------------------
 
@@ -59,6 +59,14 @@ def apply_theme(root, name: str | None = None) -> None:
 
     c = _current_theme
     style = ttk.Style(root)
+    # ``clam`` is a platform-agnostic theme that allows background colours to
+    # be overridden.  On some default system themes (e.g. ``vista``) the button
+    # background cannot be changed which results in white buttons in dark mode.
+    # Fallback silently if ``clam`` isn't available.
+    try:
+        style.theme_use("clam")
+    except TclError:
+        pass
 
     # Base colours
     root.configure(bg=c["background"])
