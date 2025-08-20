@@ -66,16 +66,19 @@ class AppController:
             return
         target = self._root / name / src.name
         if self._fs.exists(target):
-            decision = CollisionDialog.prompt(self._view._root, self._fast_loader, src, target)
-            if decision.action == "keep_source":
-                self._fs.delete_file(target)
-                self._img_svc.move_current_to_category(name)
-            elif decision.action == "keep_target":
+            if self._cfg.auto_resolve_conflicts:
                 self._img_svc.delete_current()
-            elif decision.action == "rename":
-                self._img_svc.move_current_to_category_as(name, decision.new_name)
             else:
-                return
+                decision = CollisionDialog.prompt(self._view._root, self._fast_loader, src, target)
+                if decision.action == "keep_source":
+                    self._fs.delete_file(target)
+                    self._img_svc.move_current_to_category(name)
+                elif decision.action == "keep_target":
+                    self._img_svc.delete_current()
+                elif decision.action == "rename":
+                    self._img_svc.move_current_to_category_as(name, decision.new_name)
+                else:
+                    return
         else:
             cmd = MoveImageCommand(self._img_svc, name)
             cmd.execute()
