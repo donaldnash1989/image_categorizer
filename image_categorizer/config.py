@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Tuple, Literal
 
 SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tiff", ".webp"}
 
@@ -15,3 +15,4 @@ class UiConfig:
 class AppConfig:
     ui: UiConfig = UiConfig()
     auto_resolve_conflicts: bool = False
+    theme: Literal["light", "system", "dark"] = "system"

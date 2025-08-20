@@ -19,8 +19,10 @@ class MainView(ttk.Frame):
         self._nb = ttk.Notebook(self)
         self._page_main = ttk.Frame(self._nb)
         self._page_settings = ttk.Frame(self._nb)
+        self._page_user_settings = ttk.Frame(self._nb)
         self._nb.add(self._page_main, text="Categorize")
         self._nb.add(self._page_settings, text="Settings")
+        self._nb.add(self._page_user_settings, text="User Settings")
         self._nb.pack(fill="both", expand=True)
 
         self._page_main.rowconfigure(0, weight=1)
@@ -47,6 +49,9 @@ class MainView(ttk.Frame):
 
     def place_settings(self, widget: tk.Widget) -> None:
         widget.pack(fill="both", expand=True, in_=self._page_settings)
+
+    def place_user_settings(self, widget: tk.Widget) -> None:
+        widget.pack(fill="both", expand=True, in_=self._page_user_settings)
 
     def ask_root_dir(self) -> Optional[Path]:
         path = filedialog.askdirectory(title="Select Root Directory (images in root; subfolders = categories)")

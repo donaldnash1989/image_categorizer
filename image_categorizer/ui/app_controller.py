@@ -1,5 +1,5 @@
 from pathlib import Path
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from ..interfaces.logger import ILogger
 from ..interfaces.image_loader import IImageLoader
 from ..interfaces.services import ICategoryService, IImageService
@@ -11,6 +11,7 @@ from .main_view import MainView
 from .image_view import ImageView
 from .button_panel import ButtonPanel
 from .settings_view import SettingsView
+from .user_settings_view import UserSettingsView
 from .collision_dialog import CollisionDialog
 
 
@@ -47,10 +48,15 @@ class AppController:
         # Settings
         settings = SettingsView(view._page_settings, self._cat_svc, self._cfg, on_changed=self._refresh_categories)
         view.place_settings(settings)
+        user_settings = UserSettingsView(
+            view._page_user_settings, self._cfg, on_theme_changed=self._apply_theme
+        )
+        view.place_user_settings(user_settings)
 
         # On Load
         self._refresh_categories()
         self._post_load(initial=True)
+        self._apply_theme(self._cfg.theme)
 
     def _on_delete_clicked(self):
         path = self._img_svc.current_image()
@@ -106,3 +112,16 @@ class AppController:
             self._view.error("Image Load Error", str(ex))
 
         self._view.set_remaining_count(self._img_svc.count_images())
+
+    def _apply_theme(self, theme: str) -> None:
+        style = ttk.Style(self._view._root)
+        if theme == "dark":
+            style.theme_use("clam")
+            style.configure(".", background="#333333", foreground="white")
+            self._view._root.configure(bg="#333333")
+        elif theme == "light":
+            style.theme_use("clam")
+            style.configure(".", background="#f0f0f0", foreground="black")
+            self._view._root.configure(bg="#f0f0f0")
+        else:
+            style.theme_use(style.theme_use())
