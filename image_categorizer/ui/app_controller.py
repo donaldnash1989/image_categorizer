@@ -13,12 +13,24 @@ from .button_panel import ButtonPanel
 from .settings_view import SettingsView
 from .collision_dialog import CollisionDialog
 
+
 class AppController:
-    def __init__(self, view: MainView, logger: ILogger, image_loader: IImageLoader,
-                 cat_svc: ICategoryService, img_svc: IImageService, fs: IFileSystem, config: AppConfig, root_dir: Path):
+    def __init__(
+        self,
+        view: MainView,
+        logger: ILogger,
+        display_loader: IImageLoader,
+        fast_loader: IImageLoader,
+        cat_svc: ICategoryService,
+        img_svc: IImageService,
+        fs: IFileSystem,
+        config: AppConfig,
+        root_dir: Path,
+    ):
         self._view = view
         self._logger = logger
-        self._image_loader = image_loader
+        self._display_loader = display_loader
+        self._fast_loader = fast_loader
         self._cat_svc = cat_svc
         self._img_svc = img_svc
         self._fs = fs
@@ -26,8 +38,10 @@ class AppController:
         self._root = root_dir
 
         # Pre-Load
-        img_view = ImageView(view._page_main, image_loader, config)
-        btn_panel = ButtonPanel(view._page_main, self._on_category_clicked, config, on_delete=self._on_delete_clicked)
+        img_view = ImageView(view._page_main, display_loader, config)
+        btn_panel = ButtonPanel(
+            view._page_main, self._on_category_clicked, config, on_delete=self._on_delete_clicked
+        )
         view.build_main(img_view, btn_panel)
 
         # Settings
@@ -52,7 +66,7 @@ class AppController:
             return
         target = self._root / name / src.name
         if self._fs.exists(target):
-            decision = CollisionDialog.prompt(self._view._root, self._image_loader, src, target)
+            decision = CollisionDialog.prompt(self._view._root, self._fast_loader, src, target)
             if decision.action == "keep_source":
                 self._fs.delete_file(target)
                 self._img_svc.move_current_to_category(name)
