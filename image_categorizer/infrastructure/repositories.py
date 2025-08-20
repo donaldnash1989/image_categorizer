@@ -17,7 +17,11 @@ class CategoryRepository(ICategoryRepository):
         self._logger.info(f"Category created: {name}")
 
     def delete_category_if_empty(self, root: Path, name: str) -> bool:
-        ok = self._fs.delete_dir_if_empty(root / name)
+        path = root / name
+        if not self._fs.exists(path):
+            self._logger.warn(f"Category not found: {name}")
+            return False
+        ok = self._fs.delete_dir_if_empty(path)
         if ok:
             self._logger.info(f"Category deleted: {name}")
         else:
