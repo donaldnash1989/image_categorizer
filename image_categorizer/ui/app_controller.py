@@ -86,5 +86,6 @@ class AppController:
             self._logger.error(str(ex))
             self._view.set_status("Failed to load image; buttons disabled.")
             self._view.button_panel.set_enabled(False)
+            self._view.error("Image Load Error", str(ex))
 
         self._view.set_remaining_count(self._img_svc.count_images())

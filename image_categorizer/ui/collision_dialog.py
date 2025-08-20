@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from PIL import ImageTk
 from pathlib import Path
 from typing import Optional
@@ -96,8 +96,8 @@ class CollisionDialog(tk.Toplevel):
             self._canvas_right.delete("all")
             self._canvas_left.create_image((lw - self._img_left.width())//2, (lh - self._img_left.height())//2, anchor="nw", image=self._img_left)
             self._canvas_right.create_image((rw - self._img_right.width())//2, (rh - self._img_right.height())//2, anchor="nw", image=self._img_right)
-        except Exception:
-            pass
+        except Exception as ex:
+            messagebox.showerror("Image Load Error", str(ex))
 
     @staticmethod
     def prompt(parent, image_loader: IImageLoader, source_path: Path, target_path: Path) -> "CollisionDecision":

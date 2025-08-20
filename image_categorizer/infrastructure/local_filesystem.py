@@ -11,8 +11,10 @@ class LocalFileSystem(IFileSystem):
         path.mkdir(parents=True, exist_ok=True)
     def delete_dir_if_empty(self, path: Path) -> bool:
         try:
-            if not path.exists(): 
-                return True
+            # If the directory doesn't exist we should report failure
+            # so callers can handle missing categories appropriately.
+            if not path.exists():
+                return False
             if any(path.iterdir()):
                 return False
             path.rmdir()
