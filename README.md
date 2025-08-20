@@ -10,3 +10,17 @@ Run:
 pip install -r requirements.txt
 pythonw app.pyw  # use pythonw to avoid opening a console window on Windows
 ```
+
+## Image resizing quality vs. speed
+
+`PillowImageLoader` uses Pillow's ``BILINEAR`` filter by default which is
+considerably faster than ``LANCZOS`` while keeping reasonable quality.
+For highest quality at the cost of performance, construct the loader with
+``Image.LANCZOS``; for maximum speed use ``Image.NEAREST``. Example:
+
+```python
+from PIL import Image
+from image_categorizer.infrastructure import PillowImageLoader
+
+img_loader = PillowImageLoader(resample=Image.LANCZOS)
+```
